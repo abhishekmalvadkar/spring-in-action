@@ -31,4 +31,14 @@ public class AppConfig {
         return new Greet(greetPrefix);
     }
 
+    @Bean(name = "golden")
+    public Greet goldenGreet(){
+        return new Greet("golden greet");
+    }
+
+    @Bean(name = "premium")
+    public Greet premiumGreet(){
+        return new Greet("premium greet");
+    }
+
 }

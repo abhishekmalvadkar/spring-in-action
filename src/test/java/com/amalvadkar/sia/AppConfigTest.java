@@ -1,6 +1,7 @@
 package com.amalvadkar.sia;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.Environment;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AppConfigTest {
 
@@ -56,6 +58,22 @@ public class AppConfigTest {
         try (var context = new AnnotationConfigApplicationContext(AppConfig.class)) {
             Greet greet = context.getBean(Greet.class);
             assertThat(greet.getMessage()).isEqualTo("Welcome Back");
+        }
+    }
+
+    @Test
+    void should_throw_exception_because_asking_for_bean_by_type_which_is_exist_more_then_one_in_context() {
+        try (var context = new AnnotationConfigApplicationContext(AppConfig.class)) {
+            assertThatThrownBy(() -> context.getBean(Greet.class))
+                    .isInstanceOf(NoUniqueBeanDefinitionException.class);
+        }
+    }
+
+    @Test
+    void should_return_golden_greet_bean_because_asking_by_name_irrespective_it_has_more_then_1_instance_in_the_context() {
+        try (var context = new AnnotationConfigApplicationContext(AppConfig.class)) {
+            Greet goldenGreet = context.getBean("golden", Greet.class);
+            assertThat(goldenGreet.getMessage()).isEqualTo("golden greet");
         }
     }
 
